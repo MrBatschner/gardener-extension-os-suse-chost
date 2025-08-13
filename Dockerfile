@@ -15,3 +15,10 @@ WORKDIR /
 
 COPY --from=builder /go/bin/gardener-extension-os-suse-chost /gardener-extension-os-suse-chost
 ENTRYPOINT ["/gardener-extension-os-suse-chost"]
+
+############# gardener-extension-admission-os-suse-chost
+FROM gcr.io/distroless/static-debian12:nonroot AS gardener-extension-admission-os-suse-chost
+WORKDIR /
+
+COPY --from=builder /go/bin/gardener-extension-admission-os-suse-chost /gardener-extension-admission-os-suse-chost
+ENTRYPOINT ["/gardener-extension-admission-os-suse-chost"]

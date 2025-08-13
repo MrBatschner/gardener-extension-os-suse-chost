@@ -6,6 +6,7 @@ ENSURE_GARDENER_MOD         := $(shell go get github.com/gardener/gardener@$$(go
 GARDENER_HACK_DIR           := $(shell go list -m -f "{{.Dir}}" github.com/gardener/gardener)/hack
 EXTENSION_PREFIX            := gardener-extension
 NAME                        := os-suse-chost
+ADMISSION_NAME              := admission-os-suse-chost
 REGISTRY                    := europe-docker.pkg.dev/gardener-project/public
 IMAGE_PREFIX                := $(REGISTRY)/gardener/extensions
 REPO_ROOT                   := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
@@ -15,6 +16,12 @@ LD_FLAGS                    := "-w -X github.com/gardener/$(EXTENSION_PREFIX)-$(
 LEADER_ELECTION             := true
 IGNORE_OPERATION_ANNOTATION := true
 PLATFORM                    ?= linux/amd64
+
+WEBHOOK_CONFIG_PORT         := 8443
+WEBHOOK_CONFIG_PORT         := url
+WEBHOOK_CONFIG_PORT         := host.docker.internal:$(WEBHOOK_CONFIG_PORT)
+EXTENSION_NAMESPACE	        := garden
+GARDEN_KUBECONFIG           ?=
 
 #########################################
 # Tools                                 #
@@ -35,6 +42,16 @@ start:
 		--leader-election=$(LEADER_ELECTION) \
 		--ignore-operation-annotation=$(IGNORE_OPERATION_ANNOTATION) \
 		--gardener-version="v1.56.0"
+
+.PHONY: start-admission
+start-admission:
+	@LEADER_ELECTION_NAMESPACE=$(EXTENSION_NAMESPACE) go run \
+		-ldflags $(LD_FLAGS) \
+		./cmd/$(EXTENSION_PREFIX)-$(ADMISSION_NAME) \
+		--webhook-config-server-host=0.0.0.0 \
+		--webhook-config-server-port=$(WEBHOOK_CONFIG_PORT) \
+		--webhook-config-mode=$(WEBHOOK_CONFIG_MODE) \
+        $(WEBHOOK_PARAM)
 
 #################################################################
 # Rules related to binary build, Docker image build and release #
@@ -59,8 +76,18 @@ docker-image-extension:
 		--target $(EXTENSION_PREFIX)-$(NAME) \
 		.
 
+.PHONY: docker-image-admission
+docker-image-admission:
+	@docker buildx build --load --platform=$(PLATFORM) \
+		-t $(IMAGE_PREFIX)/$(ADMISSION_NAME):$(VERSION) \
+		-t $(IMAGE_PREFIX)/$(ADMISSION_NAME):latest \
+		-f Dockerfile \
+		-m 6g \
+		--target $(EXTENSION_PREFIX)-$(ADMISSION_NAME) \
+		.
+
 .PHONY: docker-images
-docker-images: docker-image-extension
+docker-images: docker-image-extension docker-image-admission
 
 #####################################################################
 # Rules for verification, formatting, linting, testing and cleaning #
