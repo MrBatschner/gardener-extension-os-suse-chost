@@ -12,6 +12,7 @@ require (
 	golang.org/x/tools v0.35.0
 	k8s.io/api v0.33.3
 	k8s.io/apimachinery v0.33.3
+	k8s.io/client-go v0.33.3
 	k8s.io/code-generator v0.33.3
 	k8s.io/component-base v0.33.3
 	k8s.io/utils v0.0.0-20250604170112-4c0f3b243397
@@ -35,6 +36,7 @@ require (
 	github.com/brunoga/deep v1.2.5 // indirect
 	github.com/cenkalti/backoff/v5 v5.0.2 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
 	github.com/cyphar/filepath-securejoin v0.4.1 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/emicklei/go-restful/v3 v3.12.2 // indirect
@@ -84,6 +86,7 @@ require (
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
+	github.com/mitchellh/hashstructure/v2 v2.0.2 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/moby/spdystream v0.5.0 // indirect
@@ -172,7 +175,6 @@ require (
 	istio.io/client-go v1.25.1 // indirect
 	k8s.io/apiextensions-apiserver v0.33.3 // indirect
 	k8s.io/autoscaler/vertical-pod-autoscaler v1.4.1 // indirect
-	k8s.io/client-go v0.33.3 // indirect
 	k8s.io/gengo v0.0.0-20230829151522-9cce18d56c01 // indirect
 	k8s.io/gengo/v2 v2.0.0-20250207200755-1244d31929d7 // indirect
 	k8s.io/klog v1.0.0 // indirect
