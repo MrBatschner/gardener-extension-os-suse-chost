@@ -5,6 +5,8 @@
 package operatingsystemconfig
 
 import (
+	"bytes"
+	"compress/gzip"
 	"context"
 	_ "embed"
 	"fmt"
@@ -140,11 +142,31 @@ fi
 	// The provisioning script must run only once.
 	script = operatingsystemconfig.WrapProvisionOSCIntoOneshotScript(script)
 
+	// gzip compress
+	script, err = gzipCompress(script)
+	if err != nil {
+		return "", err
+	}
+
 	if osc.Spec.Type == memoryone.OSTypeMemoryOneCHost {
 		return wrapIntoMemoryOneHeaderAndFooter(osc, script)
 	}
 
 	return script, nil
+}
+
+func gzipCompress(in string) (string, error) {
+	var buf bytes.Buffer
+	gzWriter := gzip.NewWriter(&buf)
+	if _, err := gzWriter.Write([]byte(in)); err != nil {
+		return "", err
+	}
+
+	if err := gzWriter.Close(); err != nil {
+		return "", err
+	}
+
+	return buf.String(), nil
 }
 
 func wrapIntoMemoryOneHeaderAndFooter(osc *extensionsv1alpha1.OperatingSystemConfig, in string) (string, error) {
